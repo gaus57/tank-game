@@ -1,25 +1,22 @@
 import React from 'react';
-import logo from './logo.svg';
+import { Stage, Container, AppConsumer } from '@inlet/react-pixi'
+import Logo from './components/Logo'
+import logoImg from './logo.svg';
 import './App.css';
 
 function App() {
+  const width = document.body.clientWidth;
+  const height = document.body.clientHeight;
+  const logoSize = 200;
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Stage width={width} height={height}>
+      <Container>
+        <AppConsumer>
+          {app => <Logo app={app} image={logoImg} height={logoSize} width={logoSize*1.33} x={(width-logoSize*1.33)/2} y={(height-logoSize)/2} />}
+        </AppConsumer>
+      </Container>
+    </Stage>
   );
 }
 
