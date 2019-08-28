@@ -5,11 +5,18 @@ const DIRECTION_UP = 0;
 const DIRECTION_DOWN = 180*Math.PI/180;
 const DIRECTION_LEFT = 270*Math.PI/180;
 const DIRECTION_RIGHT = 90*Math.PI/180;
+const DIRECTION_KEYS = {
+  'w': DIRECTION_UP,
+  's': DIRECTION_DOWN,
+  'a': DIRECTION_LEFT,
+  'd': DIRECTION_RIGHT,
+};
 
 const SPEED = 5;
 
 export default class Tank extends React.Component {
   state = {
+    moveKeys: [],
     direction: DIRECTION_UP,
     move: false,
     x: 800,
@@ -29,44 +36,37 @@ export default class Tank extends React.Component {
   }
 
   onkeypress = (e) => {
-    switch (e.key) {
-      case 'w':
-        this.setState(() => ({
-          direction: DIRECTION_UP,
-          move: true,
-        }));
-        break;
-      case 'a':
-        this.setState(() => ({
-          direction: DIRECTION_LEFT,
-          move: true,
-        }));
-        break;
-      case 'd':
-        this.setState(() => ({
-          direction: DIRECTION_RIGHT,
-          move: true,
-        }));
-        break;
-      case 's':
-        this.setState(() => ({
-          direction: DIRECTION_DOWN,
-          move: true,
-        }));
-        break;
+    let { moveKeys } = this.state;
+    if (DIRECTION_KEYS[e.key] !== undefined && !moveKeys.includes(e.key)) {
+      moveKeys.push(e.key)
+      this.setState(() => ({
+        moveKeys: moveKeys,
+      }));
+      this.changeDirection();
     }
   };
 
   onkeyup = (e) => {
-    switch (e.key) {
-      case 'w':
-      case 'a':
-      case 'd':
-      case 's':
-        this.setState(() => ({
-          move: false,
-        }));
-        break;
+    let { moveKeys } = this.state;
+    if (moveKeys.includes(e.key)) {
+      moveKeys.splice(moveKeys.indexOf(e.key), 1)
+      this.setState(() => ({
+        moveKeys: moveKeys,
+      }));
+      this.changeDirection();
+    }
+  };
+
+  changeDirection = () => {
+    if (this.state.moveKeys.length) {
+      this.setState(({moveKeys}) => ({
+        direction: DIRECTION_KEYS[moveKeys[moveKeys.length - 1]],
+        move: true,
+      }));
+    } else {
+      this.setState(() => ({
+        move: false,
+      }));
     }
   };
 
