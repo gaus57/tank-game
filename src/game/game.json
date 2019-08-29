@@ -1,0 +1,8 @@
+{
+  "player": {
+    "move": false,
+    "direction": "up",
+    "x": 700,
+    "y": 200
+  }
+}

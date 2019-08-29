@@ -1,6 +1,5 @@
 import React from 'react';
-import { Stage, Container, AppConsumer } from '@inlet/react-pixi'
-import Tank from './components/Tank'
+import Game from './game/Game'
 import './App.css';
 
 function App() {
@@ -8,13 +7,7 @@ function App() {
   const height = document.body.clientHeight;
 
   return (
-    <Stage width={width} height={height}>
-      <Container>
-        <AppConsumer>
-          {app => <Tank app={app} />}
-        </AppConsumer>
-      </Container>
-    </Stage>
+    <Game width={width} height={height} />
   );
 }
 
