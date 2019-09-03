@@ -1,7 +1,9 @@
 import React from 'react';
-import data from './game'
-import Tank from './components/Tank'
-import * as Constants from './constants'
+import data from './game.json';
+import Tank from './components/Tank';
+import Wall from './components/Wall';
+import * as Constants from './constants';
+import prepareGame from './helpers/PrepareGameData';
 import {AppConsumer, Container, Stage} from "@inlet/react-pixi";
 
 const DIRECTION_KEYS = {
@@ -13,7 +15,7 @@ const DIRECTION_KEYS = {
 
 export default class Game extends React.Component {
   state = {
-    ...data,
+    ...prepareGame(data),
     moveKeys: [],
   };
 
@@ -54,15 +56,14 @@ export default class Game extends React.Component {
       this.setState(({moveKeys, player}) => ({
         player: {
           ...player,
-          direction: DIRECTION_KEYS[moveKeys[moveKeys.length - 1]],
-          move: true,
+          move: DIRECTION_KEYS[moveKeys[moveKeys.length - 1]],
         }
       }));
     } else {
       this.setState(({player}) => ({
         player: {
           ...player,
-          move: false,
+          move: null,
         },
       }));
     }
@@ -70,13 +71,24 @@ export default class Game extends React.Component {
 
   render() {
     const { width, height } = this.props;
-    const { player } = this.state;
+    const { player, walls } = this.state;
+    const wallsArr = [];
+    for (const key in walls) {
+      wallsArr.push(<Wall {...walls[key]} key={key} />)
+    }
 
     return <Stage width={width} height={height}>
       <Container>
         <AppConsumer>
-          {app => <Tank app={app} data={player} setData={(change) => {this.setState(({player}) => ({player: {...player, ...change}}))}} />}
+          {app => <Tank
+              app={app}
+              data={player}
+              setData={(change) => {
+                this.setState(({player}) => ({player: {...player, ...change}}))
+              }}
+          />}
         </AppConsumer>
+        {wallsArr}
       </Container>
     </Stage>
   }

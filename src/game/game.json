@@ -1,8 +1,12 @@
 {
   "player": {
-    "move": false,
+    "move": null,
     "direction": "up",
-    "x": 700,
-    "y": 200
+    "x": 28,
+    "y": 8
+  },
+  "walls": {
+    "0.0-1.39": "brick",
+    "2.0-39.1": "brick"
   }
 }

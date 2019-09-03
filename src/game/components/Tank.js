@@ -1,6 +1,6 @@
 import React from 'react';
-import * as Constants from './../constants'
-import { Sprite } from '@inlet/react-pixi'
+import * as Constants from './../constants';
+import { Sprite } from '@inlet/react-pixi';
 
 const ROTATION = {
   [Constants.DIRECTION_UP]: 0,
@@ -8,7 +8,7 @@ const ROTATION = {
   [Constants.DIRECTION_LEFT]: 270*Math.PI/180,
   [Constants.DIRECTION_RIGHT]: 90*Math.PI/180,
 };
-const SPEED = 5;
+const SPEED = .2;
 
 export default class Tank extends React.Component {
   componentDidMount() {
@@ -21,30 +21,67 @@ export default class Tank extends React.Component {
 
   tick = delta => {
     const { data, setData } = this.props;
-    if (data.move) {
-      const {x, y} = data;
-      switch (data.direction) {
+    const {x, y, direction, move} = data;
+    if (move || x%1 !== 0 || y%1 !== 0) {
+      const change = {};
+      if (move && move !== direction) {
+        if (
+          (x%1 === 0 && y%1 === 0)
+          || (move === Constants.DIRECTION_DOWN && direction === Constants.DIRECTION_UP)
+          || (move === Constants.DIRECTION_UP && direction === Constants.DIRECTION_DOWN)
+          || (move === Constants.DIRECTION_LEFT && direction === Constants.DIRECTION_RIGHT)
+          || (move === Constants.DIRECTION_RIGHT && direction === Constants.DIRECTION_LEFT)
+        ) {
+          change.direction = move;
+        }
+      }
+      switch (change.direction || direction) {
         case Constants.DIRECTION_UP:
-          setData({
-            y: y - SPEED * delta,
-          });
+          change.y = y - SPEED * delta;
           break;
         case Constants.DIRECTION_DOWN:
-          setData({
-            y: y + SPEED * delta,
-          });
+          change.y = y + SPEED * delta;
           break;
         case Constants.DIRECTION_LEFT:
-          setData({
-            x: x - SPEED * delta,
-          });
+          change.x = x - SPEED * delta;
           break;
         case Constants.DIRECTION_RIGHT:
-          setData({
-            x: x + SPEED * delta,
-          });
+          change.x = x + SPEED * delta;
           break;
       }
+      if (move !== direction) {
+        if (change.x !== undefined && Math.ceil(change.x) !== Math.ceil(x)) {
+          const xMove = change.x < x ? Math.floor(x) : Math.ceil(x);
+          const dif = Math.abs(change.x - xMove);
+          change.x = xMove;
+          switch (move) {
+            case Constants.DIRECTION_UP:
+              change.y = y - dif;
+              break;
+            case Constants.DIRECTION_DOWN:
+              change.y = y + dif;
+          }
+          if (move) {
+            change.direction = move;
+          }
+        } else if (change.y !== undefined && Math.ceil(change.y) !== Math.ceil(y)) {
+          const yMove = change.y < y ? Math.floor(y) : Math.ceil(y);
+          const dif = Math.abs(change.y - yMove);
+          change.y = yMove;
+          switch (move) {
+            case Constants.DIRECTION_LEFT:
+              change.x = x - dif;
+              break;
+            case Constants.DIRECTION_RIGHT:
+              change.x = x + dif;
+              break;
+          }
+          if (move) {
+            change.direction = move;
+          }
+        }
+      }
+      setData(change);
     }
   };
 
@@ -52,6 +89,18 @@ export default class Tank extends React.Component {
     const { x, y, direction } = this.props.data;
     const rotation = ROTATION[direction];
 
-    return <Sprite {...{ x, y, rotation }} image='tank-2.png' width={100} height={100} anchor='.5,.5' />
+    return <Sprite
+      {
+        ...{
+          x: x*Constants.SCALE,
+          y: y*Constants.SCALE,
+          rotation
+        }
+      }
+      image='tank-2.png'
+      width={4*Constants.SCALE}
+      height={4*Constants.SCALE}
+      anchor='.5,.5'
+    />
   }
 }
