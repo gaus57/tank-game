@@ -81,33 +81,33 @@ export default class Tank extends React.Component {
           }
         }
       }
-      if (change.x !== undefined && Math.floor(change.x) !== Math.floor(x)) {
+      if (change.x !== undefined && change.x !== x) {
         if (change.x > x) {
-          for (let i = Math.floor(x) + 1; i <= Math.floor(change.x); i++) {
-            if (!canMove(y, i)) {
-              change.x = i-1;
+          for (let i = Math.floor(x); i <= Math.floor(change.x); i++) {
+            if (!canMove(y, i+1, 3)) {
+              change.x = i;
               break;
             }
           }
         } else {
-          for (let i = Math.floor(x) - 1; i >= Math.floor(change.x); i--) {
-            if (!canMove(y, i)) {
+          for (let i = Math.floor(x); i >= Math.floor(change.x); i--) {
+            if (!canMove(y, i, 3)) {
               change.x = i+1;
               break;
             }
           }
         }
-      } else if (change.y !== undefined && Math.floor(change.y) !== Math.floor(y)) {
+      } else if (change.y !== undefined && change.y !== y) {
         if (change.y > y) {
-          for (let i = Math.floor(y) + 1; i <= Math.floor(change.y); i++) {
-            if (!canMove(i, x)) {
-              change.y = i-1;
+          for (let i = Math.floor(y); i <= Math.floor(change.y); i++) {
+            if (!canMove(i+1, x, 3)) {
+              change.y = i;
               break;
             }
           }
         } else {
-          for (let i = Math.floor(y) - 1; i >= Math.floor(change.y); i--) {
-            if (!canMove(i, x)) {
+          for (let i = Math.floor(y); i >= Math.floor(change.y); i--) {
+            if (!canMove(i, x, 3)) {
               change.y = i+1;
               break;
             }

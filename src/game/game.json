@@ -1,10 +1,16 @@
 {
+  "top": 0,
+  "left": 0,
+  "bottom": 50,
+  "right": 50,
   "player": {
     "move": null,
     "direction": "up",
     "x": 28,
     "y": 8
   },
+  "shellIndex": 1,
+  "shells": {},
   "walls": {
     "0.0-1.39": "brick",
     "2.0-39.1": "brick",

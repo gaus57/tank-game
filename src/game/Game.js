@@ -2,9 +2,10 @@ import React from 'react';
 import data from './game.json';
 import Tank from './components/Tank';
 import Wall from './components/Wall';
+import Shell from './components/Shell';
 import * as Constants from './constants';
 import prepareGame from './helpers/PrepareGameData';
-import {AppConsumer, Container, Stage} from "@inlet/react-pixi";
+import {AppConsumer, Container, Stage, Sprite} from "@inlet/react-pixi";
 
 const DIRECTION_KEYS = {
   'w': Constants.DIRECTION_UP,
@@ -38,6 +39,10 @@ export default class Game extends React.Component {
       }));
       this.changeDirection();
     }
+    if (e.key === ' ') {
+      const { player } = this.state;
+      this.shot(player.y, player.x, player.direction);
+    }
   };
 
   onkeyup = (e) => {
@@ -69,31 +74,58 @@ export default class Game extends React.Component {
     }
   };
 
-  canMove = (y, x) => {
+  canMove = (y, x, size) => {
     let result = true;
+    const side = Math.floor(size/2);
     check:
-    for (let i = y-1; i <= y+1; i++) {
-      for (let j = x-1; j <= x+1; j++) {
-        if (this.state.walls[`${i}.${j}`] !== undefined) {
+    for (let i = y-side; i <= y+side; i++) {
+      for (let j = x-side; j <= x+side; j++) {
+        if (
+            this.state.walls[`${i}.${j}`] !== undefined
+            || i < this.state.top
+            || i > this.state.bottom
+            || j < this.state.left
+            || j > this.state.right
+        ) {
           result = false;
           break check;
         }
       }
     }
-    console.log(y, x, result);
 
     return result;
-  }
+  };
+
+  shot = (y, x, direction) => {
+    this.setState(({shells, shellIndex}) => ({
+        shells: {
+          ...shells,
+          [shellIndex]: {y, x, direction},
+        },
+        shellIndex: shellIndex+1,
+    }))
+  };
+
+  hit = (shell, y, x) => {
+      this.setState(({shells, walls}) => {
+          delete walls[`${y}.${x}`];
+          delete shells[shell];
+
+          return {shells, walls};
+      });
+  };
 
   render() {
     const { width, height } = this.props;
-    const { player, walls } = this.state;
+    const { player, walls, shells } = this.state;
+    const shellsArr = Object.entries(shells);
+
     const wallsArr = [];
     for (const key in walls) {
       wallsArr.push(<Wall {...walls[key]} key={key} />)
     }
 
-    return <Stage width={width} height={height}>
+    return <Stage width={width} height={height} options={{ backgroundColor: 0x000000 }}>
       <Container>
         <AppConsumer>
           {app => <Tank
@@ -105,6 +137,19 @@ export default class Game extends React.Component {
               }}
           />}
         </AppConsumer>
+        {shellsArr.map(([index, shell]) => <AppConsumer key={index}>
+            {app => <Shell
+                key={index}
+                {...shell}
+                app={app}
+                index={index}
+                canMove={this.canMove}
+                hit={this.hit}
+                setData={(change) => {
+                    this.setState(({shells}) => ({shells: {...shells, [index]: {...shell, ...change}}}))
+                }}
+            />}
+        </AppConsumer>)}
         {wallsArr}
       </Container>
     </Stage>
