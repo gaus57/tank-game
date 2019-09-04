@@ -70,7 +70,19 @@ export default class Game extends React.Component {
   };
 
   canMove = (y, x) => {
-    return this.state.walls[`${y}.${x}`] === undefined
+    let result = true;
+    check:
+    for (let i = y-1; i <= y+1; i++) {
+      for (let j = x-1; j <= x+1; j++) {
+        if (this.state.walls[`${i}.${j}`] !== undefined) {
+          result = false;
+          break check;
+        }
+      }
+    }
+    console.log(y, x, result);
+
+    return result;
   }
 
   render() {

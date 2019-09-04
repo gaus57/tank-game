@@ -83,32 +83,32 @@ export default class Tank extends React.Component {
       }
       if (change.x !== undefined && Math.floor(change.x) !== Math.floor(x)) {
         if (change.x > x) {
-          for (let i = Math.floor(x) + 3; i <= Math.floor(change.x)+2; i++) {
-            if (!canMove(y, i) || !canMove(y+1, i) || !canMove(y+2, i) || !canMove(y+3, i)) {
-              change.x = i+1;
+          for (let i = Math.floor(x) + 1; i <= Math.floor(change.x); i++) {
+            if (!canMove(y, i)) {
+              change.x = i-1;
               break;
             }
           }
         } else {
-          for (let i = Math.floor(x) - 3; i >= Math.floor(change.x)-2; i--) {
-            if (!canMove(y, i) || !canMove(y+1, i) || !canMove(y+2, i) || !canMove(y+3, i)) {
-              change.x = i+3;
+          for (let i = Math.floor(x) - 1; i >= Math.floor(change.x); i--) {
+            if (!canMove(y, i)) {
+              change.x = i+1;
               break;
             }
           }
         }
       } else if (change.y !== undefined && Math.floor(change.y) !== Math.floor(y)) {
         if (change.y > y) {
-          for (let i = Math.floor(y) + 3; i <= Math.floor(change.y)+2; i++) {
-            if (!canMove(i, x) || !canMove(i, x+1) || !canMove(i, x+2) || !canMove(i, x+3)) {
-              change.y = i+1;
+          for (let i = Math.floor(y) + 1; i <= Math.floor(change.y); i++) {
+            if (!canMove(i, x)) {
+              change.y = i-1;
               break;
             }
           }
         } else {
-          for (let i = Math.floor(y) - 3; i >= Math.floor(change.y)-2; i--) {
-            if (!canMove(i, x) || !canMove(i, x+1) || !canMove(i, x+2) || !canMove(i, x+3)) {
-              change.y = i+3;
+          for (let i = Math.floor(y) - 1; i >= Math.floor(change.y); i--) {
+            if (!canMove(i, x)) {
+              change.y = i+1;
               break;
             }
           }
@@ -131,8 +131,8 @@ export default class Tank extends React.Component {
         }
       }
       image='tank-2.png'
-      width={4*Constants.SCALE}
-      height={4*Constants.SCALE}
+      width={3*Constants.SCALE}
+      height={3*Constants.SCALE}
       anchor='.5,.5'
     />
   }
