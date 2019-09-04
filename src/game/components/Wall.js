@@ -8,6 +8,6 @@ export default ({x, y, type}) => {
         y={y*Constants.SCALE}
         width={Constants.SCALE}
         height={Constants.SCALE}
-        image='brick.jpg'
+        image='brick.png'
     />
 }

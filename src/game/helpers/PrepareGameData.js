@@ -9,7 +9,6 @@ export default function prepareGame(data) {
             const end = points[1].split('.').map(item => Number.parseInt(item));
             for (let y = start[0]; y <= end[0]; y++) {
                 for (let x = start[1]; x <= end[1]; x++) {
-                    console.log(y,x);
                     result.walls[y+'.'+x] = {x, y, type: wall};
                 }
             }
@@ -18,7 +17,6 @@ export default function prepareGame(data) {
             const position = key.split('.');
             result.walls[key] = {x: position[1], y: position[0], type: wall};
         }
-
     }
 
     return result;

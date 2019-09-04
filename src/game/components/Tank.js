@@ -20,7 +20,7 @@ export default class Tank extends React.Component {
   }
 
   tick = delta => {
-    const { data, setData } = this.props;
+    const { data, setData, canMove } = this.props;
     const {x, y, direction, move} = data;
     if (move || x%1 !== 0 || y%1 !== 0) {
       const change = {};
@@ -54,13 +54,13 @@ export default class Tank extends React.Component {
           const xMove = change.x < x ? Math.floor(x) : Math.ceil(x);
           const dif = Math.abs(change.x - xMove);
           change.x = xMove;
-          switch (move) {
-            case Constants.DIRECTION_UP:
-              change.y = y - dif;
-              break;
-            case Constants.DIRECTION_DOWN:
-              change.y = y + dif;
-          }
+          // switch (move) {
+          //   case Constants.DIRECTION_UP:
+          //     change.y = y - dif;
+          //     break;
+          //   case Constants.DIRECTION_DOWN:
+          //     change.y = y + dif;
+          // }
           if (move) {
             change.direction = move;
           }
@@ -68,16 +68,49 @@ export default class Tank extends React.Component {
           const yMove = change.y < y ? Math.floor(y) : Math.ceil(y);
           const dif = Math.abs(change.y - yMove);
           change.y = yMove;
-          switch (move) {
-            case Constants.DIRECTION_LEFT:
-              change.x = x - dif;
-              break;
-            case Constants.DIRECTION_RIGHT:
-              change.x = x + dif;
-              break;
-          }
+          // switch (move) {
+          //   case Constants.DIRECTION_LEFT:
+          //     change.x = x - dif;
+          //     break;
+          //   case Constants.DIRECTION_RIGHT:
+          //     change.x = x + dif;
+          //     break;
+          // }
           if (move) {
             change.direction = move;
+          }
+        }
+      }
+      if (change.x !== undefined && Math.floor(change.x) !== Math.floor(x)) {
+        if (change.x > x) {
+          for (let i = Math.floor(x) + 3; i <= Math.floor(change.x)+2; i++) {
+            if (!canMove(y, i) || !canMove(y+1, i) || !canMove(y+2, i) || !canMove(y+3, i)) {
+              change.x = i+1;
+              break;
+            }
+          }
+        } else {
+          for (let i = Math.floor(x) - 3; i >= Math.floor(change.x)-2; i--) {
+            if (!canMove(y, i) || !canMove(y+1, i) || !canMove(y+2, i) || !canMove(y+3, i)) {
+              change.x = i+3;
+              break;
+            }
+          }
+        }
+      } else if (change.y !== undefined && Math.floor(change.y) !== Math.floor(y)) {
+        if (change.y > y) {
+          for (let i = Math.floor(y) + 3; i <= Math.floor(change.y)+2; i++) {
+            if (!canMove(i, x) || !canMove(i, x+1) || !canMove(i, x+2) || !canMove(i, x+3)) {
+              change.y = i+1;
+              break;
+            }
+          }
+        } else {
+          for (let i = Math.floor(y) - 3; i >= Math.floor(change.y)-2; i--) {
+            if (!canMove(i, x) || !canMove(i, x+1) || !canMove(i, x+2) || !canMove(i, x+3)) {
+              change.y = i+3;
+              break;
+            }
           }
         }
       }

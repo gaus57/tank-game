@@ -69,6 +69,10 @@ export default class Game extends React.Component {
     }
   };
 
+  canMove = (y, x) => {
+    return this.state.walls[`${y}.${x}`] === undefined
+  }
+
   render() {
     const { width, height } = this.props;
     const { player, walls } = this.state;
@@ -83,6 +87,7 @@ export default class Game extends React.Component {
           {app => <Tank
               app={app}
               data={player}
+              canMove={this.canMove}
               setData={(change) => {
                 this.setState(({player}) => ({player: {...player, ...change}}))
               }}
