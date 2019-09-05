@@ -5,7 +5,7 @@ import Wall from './components/Wall';
 import Shell from './components/Shell';
 import * as Constants from './constants';
 import prepareGame from './helpers/PrepareGameData';
-import {AppConsumer, Container, Stage, Sprite} from "@inlet/react-pixi";
+import {AppConsumer, Container, Stage} from "@inlet/react-pixi";
 
 const DIRECTION_KEYS = {
   'w': Constants.DIRECTION_UP,
@@ -30,6 +30,26 @@ export default class Game extends React.Component {
     window.removeEventListener('onkeyup', this.onkeyup);
   }
 
+  currentPlayer = () => {
+    return this.state.players[this.state.player];
+  };
+
+  changePlayer = (player, change) => {
+    this.setState(({players}) => ({
+      players: {
+        ...players,
+        [player]: {
+          ...players[player],
+          ...change,
+        }
+      }
+    }));
+  };
+
+  changeCurrentPlayer = (change) => {
+    this.changePlayer(this.state.player, change);
+  };
+
   onkeypress = (e) => {
     let { moveKeys } = this.state;
     if (DIRECTION_KEYS[e.key] !== undefined && !moveKeys.includes(e.key)) {
@@ -40,7 +60,7 @@ export default class Game extends React.Component {
       this.changeDirection();
     }
     if (e.key === ' ') {
-      const { player } = this.state;
+      const player = this.currentPlayer();
       this.shot(player.y, player.x, player.direction);
     }
   };
@@ -57,20 +77,11 @@ export default class Game extends React.Component {
   };
 
   changeDirection = () => {
+    const {moveKeys} = this.state;
     if (this.state.moveKeys.length) {
-      this.setState(({moveKeys, player}) => ({
-        player: {
-          ...player,
-          move: DIRECTION_KEYS[moveKeys[moveKeys.length - 1]],
-        }
-      }));
+      this.changeCurrentPlayer({move: DIRECTION_KEYS[moveKeys[moveKeys.length - 1]]});
     } else {
-      this.setState(({player}) => ({
-        player: {
-          ...player,
-          move: null,
-        },
-      }));
+      this.changeCurrentPlayer({move: null});
     }
   };
 
@@ -117,7 +128,8 @@ export default class Game extends React.Component {
 
   render() {
     const { width, height } = this.props;
-    const { player, walls, shells } = this.state;
+    const { players, walls, shells } = this.state;
+    const playersArr = Object.entries(players);
     const shellsArr = Object.entries(shells);
 
     const wallsArr = [];
@@ -127,16 +139,16 @@ export default class Game extends React.Component {
 
     return <Stage width={width} height={height} options={{ backgroundColor: 0x000000 }}>
       <Container>
-        <AppConsumer>
+        {playersArr.map(([index, player]) => <AppConsumer key={index}>
           {app => <Tank
-              app={app}
-              data={player}
-              canMove={this.canMove}
-              setData={(change) => {
-                this.setState(({player}) => ({player: {...player, ...change}}))
-              }}
+            app={app}
+            data={player}
+            canMove={this.canMove}
+            setData={(change) => {
+              this.changePlayer(index, change);
+            }}
           />}
-        </AppConsumer>
+        </AppConsumer>)}
         {shellsArr.map(([index, shell]) => <AppConsumer key={index}>
             {app => <Shell
                 key={index}

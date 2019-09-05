@@ -8,7 +8,7 @@ const ROTATION = {
   [Constants.DIRECTION_LEFT]: 270*Math.PI/180,
   [Constants.DIRECTION_RIGHT]: 90*Math.PI/180,
 };
-const SPEED = .2;
+const SPEED = .1;
 
 export default class Tank extends React.Component {
   componentDidMount() {

@@ -11,7 +11,7 @@ const Shell = PixiComponent('Shell', {
 
         instance.clear();
         instance.beginFill(0xffffff);
-        instance.drawCircle(x*Constants.SCALE, y*Constants.SCALE, .2*Constants.SCALE);
+        instance.drawCircle(x*Constants.SCALE, y*Constants.SCALE, .15*Constants.SCALE);
         instance.endFill();
     },
 });
