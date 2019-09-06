@@ -4,4 +4,4 @@ export const DIRECTION_DOWN = 'down';
 export const DIRECTION_LEFT = 'left';
 export const DIRECTION_RIGHT = 'right';
 // Масштаб одной клетки в пикселях
-export const SCALE = 25;
+export const SCALE = 20;

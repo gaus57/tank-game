@@ -8,21 +8,24 @@
     "1": {
       "move": null,
       "direction": "up",
-      "x": 28,
-      "y": 8
+      "x": 25,
+      "y": 49
     },
     "2": {
       "move": null,
-      "direction": "right",
-      "x": 6,
-      "y": 18
+      "direction": "down",
+      "x": 25,
+      "y": 1
     }
   },
   "shellIndex": 1,
   "shells": {},
   "walls": {
-    "0.0-1.39": "brick",
-    "2.0-39.1": "brick",
-    "6.20-39.22": "brick"
+    "3.3-20.5": "brick",
+    "30.3-47.5": "brick",
+    "3.45-20.47": "brick",
+    "30.45-47.47": "brick",
+    "3.9-5.40": "brick",
+    "45.9-47.40": "brick"
   }
 }

@@ -8,7 +8,7 @@ const ROTATION = {
   [Constants.DIRECTION_LEFT]: 270*Math.PI/180,
   [Constants.DIRECTION_RIGHT]: 90*Math.PI/180,
 };
-const SPEED = .1;
+const SPEED = .2;
 
 export default class Tank extends React.Component {
   componentDidMount() {
@@ -130,7 +130,7 @@ export default class Tank extends React.Component {
           rotation
         }
       }
-      image='tank-2.png'
+      image='tank-3.png'
       width={3*Constants.SCALE}
       height={3*Constants.SCALE}
       anchor='.5,.5'
