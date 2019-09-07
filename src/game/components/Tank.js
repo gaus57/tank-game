@@ -49,37 +49,15 @@ export default class Tank extends React.Component {
           change.x = x + SPEED * delta;
           break;
       }
-      if (move !== direction) {
-        if (change.x !== undefined && Math.ceil(change.x) !== Math.ceil(x)) {
-          const xMove = change.x < x ? Math.floor(x) : Math.ceil(x);
-          const dif = Math.abs(change.x - xMove);
-          change.x = xMove;
-          // switch (move) {
-          //   case Constants.DIRECTION_UP:
-          //     change.y = y - dif;
-          //     break;
-          //   case Constants.DIRECTION_DOWN:
-          //     change.y = y + dif;
-          // }
-          if (move) {
-            change.direction = move;
-          }
-        } else if (change.y !== undefined && Math.ceil(change.y) !== Math.ceil(y)) {
-          const yMove = change.y < y ? Math.floor(y) : Math.ceil(y);
-          const dif = Math.abs(change.y - yMove);
-          change.y = yMove;
-          // switch (move) {
-          //   case Constants.DIRECTION_LEFT:
-          //     change.x = x - dif;
-          //     break;
-          //   case Constants.DIRECTION_RIGHT:
-          //     change.x = x + dif;
-          //     break;
-          // }
-          if (move) {
-            change.direction = move;
-          }
-        }
+      if (
+          move
+          && move !== direction
+          && (
+              change.x !== undefined && Math.ceil(change.x) !== Math.ceil(x)
+              || change.y !== undefined && Math.ceil(change.y) !== Math.ceil(y)
+          )
+      ) {
+        change.direction = move;
       }
       if (change.x !== undefined && change.x !== x) {
         if (change.x > x) {
