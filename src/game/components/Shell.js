@@ -1,7 +1,7 @@
 import React from 'react';
 import { Graphics } from 'pixi.js';
 import { PixiComponent } from '@inlet/react-pixi';
-import * as Constants from './../constants';
+import * as Constants from '../abstract/constants';
 
 const SPEED = 1;
 const Shell = PixiComponent('Shell', {

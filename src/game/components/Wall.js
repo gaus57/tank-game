@@ -1,5 +1,5 @@
 import React from 'react';
-import * as Constants from './../constants';
+import * as Constants from '../abstract/constants';
 import { Sprite } from '@inlet/react-pixi';
 
 export default ({x, y, type}) => {

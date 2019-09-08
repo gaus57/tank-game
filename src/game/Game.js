@@ -3,7 +3,7 @@ import data from './game.json';
 import Tank from './components/Tank';
 import Wall from './components/Wall';
 import Shell from './components/Shell';
-import * as Constants from './constants';
+import * as Constants from './abstract/constants';
 import prepareGame from './helpers/PrepareGameData';
 import {AppConsumer, Container, PixiComponent, Stage} from "@inlet/react-pixi";
 import {Graphics} from "pixi.js";
