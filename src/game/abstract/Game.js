@@ -1,5 +1,6 @@
 import AbstractArea from "./Area";
 import AbstractTank from "./Tank";
+import AbstractShell from "./Shell";
 
 export default class AbstractGame {
     state = {
@@ -41,7 +42,7 @@ export default class AbstractGame {
      */
     getArea = (posX, posY) => {
         for (const key in this.state.tanks) {
-            const tank = AbstractTank(this.state.tanks[key]);
+            const tank = new AbstractTank(this.state.tanks[key]);
             if (tank.takesPosition(posX, posY)) {
                 return tank;
             }
@@ -49,7 +50,7 @@ export default class AbstractGame {
 
         const area = this.state.areas[`${Math.floor(posX)}.${Math.floor(posY)}`];
 
-        return area ? AbstractArea(area) : null;
+        return area ? new AbstractArea(area) : null;
     };
 
     shot = () => {
@@ -61,6 +62,17 @@ export default class AbstractGame {
     };
 
     tick = (delta) => {
-
+        for (const key in this.state.tanks) {
+            const change = new AbstractTank(this.state.tanks[key]).tick(this, delta);
+            if (change) {
+                this.state.tanks[key] = {...this.state.tanks[key], ...change};
+            }
+        }
+        for (const key in this.state.shells) {
+            const change = new AbstractShell(this.state.shells[key]).tick(this, delta);
+            if (change) {
+                this.state.shells[key] = {...this.state.shells[key], ...change};
+            }
+        }
     };
 }

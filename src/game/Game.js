@@ -1,12 +1,13 @@
 import React from 'react';
 import data from './game.json';
 import Tank from './components/Tank';
-import Wall from './components/Wall';
+import Area from './components/Area';
 import Shell from './components/Shell';
 import * as Constants from './abstract/constants';
 import prepareGame from './helpers/PrepareGameData';
-import {AppConsumer, Container, PixiComponent, Stage} from "@inlet/react-pixi";
+import {withPixiApp, Container, PixiComponent, Stage} from "@inlet/react-pixi";
 import {Graphics} from "pixi.js";
+import AbstractGame from "./abstract/Game";
 
 const DIRECTION_KEYS = {
   'w': Constants.DIRECTION_UP,
@@ -27,32 +28,43 @@ const MapBorder = PixiComponent('MapBorder', {
   },
 });
 
-export default class Game extends React.Component {
+const Game = withPixiApp(class Game extends React.Component {
   state = {
     ...prepareGame(data),
     moveKeys: [],
   };
 
   componentDidMount() {
+    this.props.app.ticker.add(this.tick);
     window.onkeypress = this.onkeypress;
     window.onkeyup = this.onkeyup;
   }
 
   componentWillUnmount() {
+    this.props.app.ticker.remove(this.tick);
     window.removeEventListener('onkeypress', this.onkeypress);
     window.removeEventListener('onkeyup', this.onkeyup);
   }
 
+  tick = delta => {
+    this.setState(state => {
+      const game = new AbstractGame(state);
+      game.tick(delta);
+
+      return game.state;
+    });
+  };
+
   currentPlayer = () => {
-    return this.state.players[this.state.player];
+    return this.state.tanks[this.state.player];
   };
 
   changePlayer = (player, change) => {
-    this.setState(({players}) => ({
-      players: {
-        ...players,
+    this.setState(({tanks}) => ({
+      tanks: {
+        ...tanks,
         [player]: {
-          ...players[player],
+          ...tanks[player],
           ...change,
         }
       }
@@ -72,10 +84,10 @@ export default class Game extends React.Component {
       }));
       this.changeDirection();
     }
-    if (e.key === ' ') {
-      const player = this.currentPlayer();
-      this.shot(player.y, player.x, player.direction);
-    }
+    // if (e.key === ' ') {
+    //   const player = this.currentPlayer();
+    //   this.shot(player.y, player.x, player.direction);
+    // }
   };
 
   onkeyup = (e) => {
@@ -91,109 +103,29 @@ export default class Game extends React.Component {
 
   changeDirection = () => {
     const {moveKeys} = this.state;
-    if (this.state.moveKeys.length) {
-      this.changeCurrentPlayer({move: DIRECTION_KEYS[moveKeys[moveKeys.length - 1]]});
+    if (moveKeys.length) {
+      this.changeCurrentPlayer({moveDirection: DIRECTION_KEYS[moveKeys[moveKeys.length - 1]]});
     } else {
-      this.changeCurrentPlayer({move: null});
+      this.changeCurrentPlayer({moveDirection: null});
     }
-  };
-
-  canMove = (y, x, size) => {
-    const {top, bottom, left, right, player, players, walls} = this.state;
-    let result = true;
-    const side = Math.floor(size/2);
-    check:
-    for (let i = y-side; i <= y+side; i++) {
-      for (let j = x-side; j <= x+side; j++) {
-        if (
-            walls[`${i}.${j}`] !== undefined
-            || i < top
-            || i > bottom
-            || j < left
-            || j > right
-        ) {
-          result = false;
-          break check;
-        }
-        for (const n in players) {
-          if (
-            n !== player
-            && x >= Math.floor(players[n].x-1-side)
-            && x <= Math.ceil(players[n].x+1+side)
-            && y >= Math.floor(players[n].y-1-side)
-            && y <= Math.ceil(players[n].y+1+side)
-          ) {
-            result = false;
-            break check;
-          }
-        }
-      }
-    }
-
-    return result;
-  };
-
-  shot = (y, x, direction) => {
-    this.setState(({shells, shellIndex}) => ({
-        shells: {
-          ...shells,
-          [shellIndex]: {y, x, direction},
-        },
-        shellIndex: shellIndex+1,
-    }))
-  };
-
-  hit = (shell, y, x) => {
-      this.setState(({shells, walls}) => {
-          delete walls[`${y}.${x}`];
-          delete shells[shell];
-
-          return {shells, walls};
-      });
   };
 
   render() {
     const { width, height } = this.props;
-    const { players, walls, shells, top, bottom, left, right } = this.state;
-    const playersArr = Object.entries(players);
-    const shellsArr = Object.entries(shells);
+    const { tanks, areas, shells, top, bottom, left, right } = this.state;
     const mapWidth = (right - left + 1) * Constants.SCALE;
     const mapHeight = (bottom - top + 1) * Constants.SCALE;
     const currentPlayer = this.currentPlayer();
 
-    const wallsArr = [];
-    for (const key in walls) {
-      wallsArr.push(<Wall {...walls[key]} key={key} />)
-    }
-
-    return <Stage width={width} height={height} options={{ backgroundColor: 0x333333 }}>
-      <Container position={[(left - currentPlayer.x) * Constants.SCALE + width / 2, (top - currentPlayer.y) * Constants.SCALE + height / 2]}>
+    return <Container position={[(left - currentPlayer.posX) * Constants.SCALE + width / 2, (top - currentPlayer.posY) * Constants.SCALE + height / 2]}>
         <MapBorder x={left} y={top} width={mapWidth} height={mapHeight} />
-        {playersArr.map(([index, player]) => <AppConsumer key={index}>
-          {app => <Tank
-            app={app}
-            data={player}
-            canMove={this.canMove}
-            setData={(change) => {
-              this.changePlayer(index, change);
-            }}
-          />}
-        </AppConsumer>)}
-        {shellsArr.map(([index, shell]) => <AppConsumer key={index}>
-            {app => <Shell
-                key={index}
-                {...shell}
-                app={app}
-                index={index}
-                canMove={this.canMove}
-                hit={this.hit}
-                setData={(change) => {
-                    this.setState(({shells}) => ({shells: {...shells, [index]: {...shell, ...change}}}))
-                }}
-            />}
-        </AppConsumer>)}
-        {wallsArr}
-      </Container>
-    </Stage>
+        {Object.entries(tanks).map(([index, tank]) => <Tank key={index} data={tank} />)}
+        {Object.entries(shells).map(([index, shell]) => <Shell key={index} {...shell} />)}
+        {Object.entries(areas).map(([index, area]) => <Area key={index} {...area} />)}
+    </Container>
   }
-}
+});
+
+export default ({width, height}) => <Stage width={width} height={height} options={{ backgroundColor: 0x333333 }}>
+  <Game {...{width, height}} />
+</Stage>

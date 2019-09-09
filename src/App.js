@@ -7,7 +7,7 @@ function App() {
   const height = document.body.clientHeight;
 
   return (
-    <Game width={width} height={height} />
+      <Game width={width} height={height} />
   );
 }
 

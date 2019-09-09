@@ -1,4 +1,4 @@
-import * as Constants from 'constants';
+import * as Constants from './constants';
 
 export default class AbstractTank {
     size = 1;
@@ -55,7 +55,7 @@ export default class AbstractTank {
         result = {...result, ...this._move(this.posX, this.posY, direction, speed, delta)};
         if (result.posX !== undefined && Math.floor(result.posX) !== Math.floor(this.posX)) {
             let stepPosX = this._nextStep(this.posX, result.posX);
-            delta = Math.abs(delta * (result.posX - stepPosX) / (stepPosX - this.posX))
+            delta = Math.abs(delta * (result.posX - stepPosX) / (stepPosX - this.posX));
             result.posX = stepPosX;
             if (direction !== this.moveDirection) {
                 direction = this.moveDirection;
@@ -70,7 +70,7 @@ export default class AbstractTank {
                     ? Math.min(...stepAreas.map((area) => area.movedSpeed(this._speed())))
                     : this._speed();
                 result = {...result, ...this._move(stepPosX, this.posY, direction, stepSpeed, delta)};
-                if (stepPosX === Math.floor(result.posX)) {
+                if (Math.abs(stepPosX - result.posX) < 1) {
                     break;
                 }
                 const nextStepPosX = this._nextStep(stepPosX, result.posX);
@@ -95,7 +95,7 @@ export default class AbstractTank {
                     ? Math.min(...stepAreas.map((area) => area.movedSpeed(this._speed())))
                     : this._speed();
                 result = {...result, ...this._move(this.posX, stepPosY, direction, stepSpeed, delta)};
-                if (stepPosY === Math.floor(result.posY)) {
+                if (Math.abs(stepPosY - result.posY) < 1) {
                     break;
                 }
                 const nextStepPosY = this._nextStep(stepPosY, result.posY);
