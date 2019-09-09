@@ -41,8 +41,6 @@ export default class AbstractTank {
         }
 
         let result = {};
-        const area = game.getArea(this.posX, this.posY);
-        const speed = area ? area.movedSpeed(this._speed()) : this._speed();
         if (
             Constants.OPPOSITE_DIRECTIONS[this.moveDirection] === this.direction
             || (this.moveDirection && this.moveDirection !== this.direction && this.posX%1 === 0 && this.posX%1 === 0)
@@ -50,6 +48,10 @@ export default class AbstractTank {
             result.direction = this.moveDirection;
         }
         let direction = result.direction || this.direction;
+        const areas = game.getAreas(this.posX, this.posY, this.posX + this.size - 1, this.posY + this.size - 1);
+        const speed = areas.length > 0
+            ? Math.min(...areas.map((area) => area.movedSpeed(this._speed())))
+            : this._speed();
         result = {...result, ...this._move(this.posX, this.posY, direction, speed, delta)};
         if (result.posX !== undefined && Math.floor(result.posX) !== Math.floor(this.posX)) {
             let stepPosX = this._nextStep(this.posX, result.posX);
@@ -60,40 +62,44 @@ export default class AbstractTank {
                 result.direction = this.moveDirection;
             }
             while (true) {
-                const stepArea = game.getArea(stepPosX, this.posY);
-                if (stepArea && !stepArea.canBeMoved(this)) {
+                const stepAreas = game.getAreas(stepPosX, this.posY, stepPosX + this.size - 1, this.posY + this.size - 1);
+                if (stepAreas.length > 0 && !stepAreas.reduce((res, area) => res && area.canBeMoved(this), true)) {
                     break;
                 }
-                const stepSpeed = stepArea ? stepArea.movedSpeed(this._speed()) : this._speed();
+                const stepSpeed = stepAreas.length > 0
+                    ? Math.min(...stepAreas.map((area) => area.movedSpeed(this._speed())))
+                    : this._speed();
                 result = {...result, ...this._move(stepPosX, this.posY, direction, stepSpeed, delta)};
                 if (stepPosX === Math.floor(result.posX)) {
                     break;
                 }
                 const nextStepPosX = this._nextStep(stepPosX, result.posX);
-                delta = Math.abs(delta * (result.posX - nextStepPosX) / (nextStepPosX - stepPosX))
+                delta = Math.abs(delta * (result.posX - nextStepPosX) / (nextStepPosX - stepPosX));
                 stepPosX = nextStepPosX;
                 result.posX = stepPosX;
             }
         } else if (result.posY !== undefined && Math.floor(result.posY) !== Math.floor(this.posY)) {
             let stepPosY = this._nextStep(this.posY, result.posY);
-            delta = Math.abs(delta * (result.posY - stepPosY) / (stepPosY - this.posY))
+            delta = Math.abs(delta * (result.posY - stepPosY) / (stepPosY - this.posY));
             result.posY = stepPosY;
             if (direction !== this.moveDirection) {
                 direction = this.moveDirection;
                 result.direction = this.moveDirection;
             }
             while (true) {
-                const stepArea = game.getArea(this.posX, stepPosY);
-                if (stepArea && !stepArea.canBeMoved(this)) {
-                    return result;
+                const stepAreas = game.getAreas(this.posX, stepPosY, this.posX + this.size - 1, stepPosY + this.size - 1);
+                if (stepAreas.length > 0 && !stepAreas.reduce((res, area) => res && area.canBeMoved(this), true)) {
+                    break;
                 }
-                const stepSpeed = stepArea ? stepArea.movedSpeed(this._speed()) : this._speed();
+                const stepSpeed = stepAreas.length > 0
+                    ? Math.min(...stepAreas.map((area) => area.movedSpeed(this._speed())))
+                    : this._speed();
                 result = {...result, ...this._move(this.posX, stepPosY, direction, stepSpeed, delta)};
                 if (stepPosY === Math.floor(result.posY)) {
                     break;
                 }
                 const nextStepPosY = this._nextStep(stepPosY, result.posY);
-                delta = Math.abs(delta * (result.posY - nextStepPosY) / (nextStepPosY - stepPosY))
+                delta = Math.abs(delta * (result.posY - nextStepPosY) / (nextStepPosY - stepPosY));
                 stepPosY = nextStepPosY;
                 result.posY = stepPosY;
             }
