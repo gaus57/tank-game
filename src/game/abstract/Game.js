@@ -4,6 +4,11 @@ import AbstractShell from "./Shell";
 
 export default class AbstractGame {
     state = {
+        top: 0,
+        left: 0,
+        bottom: 0,
+        right: 0,
+        player: "1",
         tanks: {},
         areas: {},
         shells: {},
@@ -41,6 +46,10 @@ export default class AbstractGame {
      * @returns {AbstractArea|AbstractTank|null}
      */
     getArea = (posX, posY) => {
+        if (posX < this.state.left || posX > this.state.right || posY < this.state.top || posY > this.state.bottom) {
+            return new AbstractArea({canBeMovedTank: false, canBeMovedShell: true})
+        }
+
         for (const key in this.state.tanks) {
             const tank = new AbstractTank(this.state.tanks[key]);
             if (tank.takesPosition(posX, posY)) {

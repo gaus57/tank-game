@@ -53,30 +53,33 @@ export default class AbstractTank {
             ? Math.min(...areas.map((area) => area.movedSpeed(this._speed())))
             : this._speed();
         result = {...result, ...this._move(this.posX, this.posY, direction, speed, delta)};
-        if (result.posX !== undefined && Math.floor(result.posX) !== Math.floor(this.posX)) {
-            let stepPosX = this._nextStep(this.posX, result.posX);
-            delta = Math.abs(delta * (result.posX - stepPosX) / (stepPosX - this.posX));
-            result.posX = stepPosX;
-            if (direction !== this.moveDirection) {
-                direction = this.moveDirection;
-                result.direction = this.moveDirection;
-            }
+        if (result.posX !== undefined) {
+            let prevStepPosX = this.posX;
             while (true) {
+                let stepPosX = this._nextStep(this.posX, result.posX);
                 const stepAreas = game.getAreas(stepPosX, this.posY, stepPosX + this.size - 1, this.posY + this.size - 1);
                 if (stepAreas.length > 0 && !stepAreas.reduce((res, area) => res && area.canBeMoved(this), true)) {
+                    result.posX = prevStepPosX;
+                    console.log('cantBeMoved', stepAreas);
                     break;
                 }
+                if (Math.abs(stepPosX - result.posX) < 1) {
+                    break;
+                }
+                if (!this.moveDirection) {
+                    result.posX = stepPosX;
+                    break;
+                }
+                delta = Math.abs(delta * (result.posX - stepPosX) / (stepPosX - prevStepPosX));
                 const stepSpeed = stepAreas.length > 0
                     ? Math.min(...stepAreas.map((area) => area.movedSpeed(this._speed())))
                     : this._speed();
                 result = {...result, ...this._move(stepPosX, this.posY, direction, stepSpeed, delta)};
-                if (Math.abs(stepPosX - result.posX) < 1) {
-                    break;
+                prevStepPosX = stepPosX;
+                if (direction !== this.moveDirection) {
+                    direction = this.moveDirection;
+                    result.direction = this.moveDirection;
                 }
-                const nextStepPosX = this._nextStep(stepPosX, result.posX);
-                delta = Math.abs(delta * (result.posX - nextStepPosX) / (nextStepPosX - stepPosX));
-                stepPosX = nextStepPosX;
-                result.posX = stepPosX;
             }
         } else if (result.posY !== undefined && Math.floor(result.posY) !== Math.floor(this.posY)) {
             let stepPosY = this._nextStep(this.posY, result.posY);
