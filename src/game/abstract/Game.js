@@ -35,7 +35,7 @@ export default class AbstractGame {
                 area && result.push(area);
             }
         }
-
+        console.log(posX1, posY1, posX2, posY2, result);
         return result;
     };
 

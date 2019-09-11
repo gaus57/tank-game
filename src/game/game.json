@@ -9,15 +9,17 @@
       "moveDirection": null,
       "direction": "up",
       "posX": 25,
-      "posY": 49,
-      "speed": 0.2
+      "posY": 48,
+      "speed": 0.2,
+      "size": 3
     },
     "2": {
       "moveDirection": null,
       "direction": "down",
       "posX": 25,
-      "posY": 1,
-      "speed": 0.2
+      "posY": 0,
+      "speed": 0.2,
+      "size": 3
     }
   },
   "shellIndex": 1,

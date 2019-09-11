@@ -9,6 +9,6 @@ export default ({posX, posY}) => {
         width={Constants.SCALE}
         height={Constants.SCALE}
         image='brick.png'
-        anchor='.5,.5'
+        anchor='1,1'
     />
 }
