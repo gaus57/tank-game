@@ -75,6 +75,15 @@ const Game = withPixiApp(class Game extends React.Component {
     this.changePlayer(this.state.player, change);
   };
 
+  shot = () => {
+      this.setState(state => {
+          const game = new AbstractGame(state);
+          game.shot();
+
+          return game.state;
+      });
+  };
+
   onkeypress = (e) => {
     let { moveKeys } = this.state;
     if (DIRECTION_KEYS[e.key] !== undefined && !moveKeys.includes(e.key)) {
@@ -84,10 +93,10 @@ const Game = withPixiApp(class Game extends React.Component {
       }));
       this.changeDirection();
     }
-    // if (e.key === ' ') {
-    //   const player = this.currentPlayer();
-    //   this.shot(player.y, player.x, player.direction);
-    // }
+    if (e.key === ' ') {
+      const player = this.currentPlayer();
+      this.shot(player.y, player.x, player.direction);
+    }
   };
 
   onkeyup = (e) => {

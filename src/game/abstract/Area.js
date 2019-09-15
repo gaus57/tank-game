@@ -1,4 +1,6 @@
 export default class AbstractArea {
+    posX = 0;
+    posY = 0;
     canBeMovedTank = false;
     canBeMovedShell = false;
     speedCoefficient = 0;

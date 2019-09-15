@@ -14,8 +14,8 @@ export default ({data}) => {
     const rotation = ROTATION[direction];
 
     return <Sprite
-        x={posX*Constants.SCALE}
-        y={posY*Constants.SCALE}
+        x={(posX+0.5)*Constants.SCALE}
+        y={(posY+0.5)*Constants.SCALE}
         rotation={rotation}
         image='tank-3.png'
         width={3*Constants.SCALE}

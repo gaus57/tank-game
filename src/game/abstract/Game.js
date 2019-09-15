@@ -35,7 +35,7 @@ export default class AbstractGame {
                 area && result.push(area);
             }
         }
-        console.log(posX1, posY1, posX2, posY2, result);
+        // console.log('getAreas', posX1, posY1, posX2, posY2, result);
         return result;
     };
 
@@ -47,7 +47,7 @@ export default class AbstractGame {
      */
     getArea = (posX, posY) => {
         if (posX < this.state.left || posX > this.state.right || posY < this.state.top || posY > this.state.bottom) {
-            return new AbstractArea({canBeMovedTank: false, canBeMovedShell: true})
+            return new AbstractArea({canBeMovedTank: false, canBeMovedShell: false})
         }
 
         for (const key in this.state.tanks) {
@@ -63,11 +63,22 @@ export default class AbstractGame {
     };
 
     shot = () => {
-
+        const tank = new AbstractTank(this.state.tanks[this.state.player]);
+        this.state.shells[this.state.shellIndex] = tank.shot();
+        this.state.shells[this.state.shellIndex].index = this.state.shellIndex;
+        console.log('shot', this.state.shells[this.state.shellIndex]);
+        this.state.shellIndex++;
     };
 
     hit = (area, shell) => {
+        if (area instanceof AbstractArea) {
+            console.log('area hit', area);
+            delete this.state.areas[`${area.posX}.${area.posY}`];
+        }
+        if (area instanceof AbstractTank) {
 
+        }
+        delete this.state.shells[shell.index];
     };
 
     tick = (delta) => {
@@ -79,6 +90,7 @@ export default class AbstractGame {
         }
         for (const key in this.state.shells) {
             const change = new AbstractShell(this.state.shells[key]).tick(this, delta);
+            console.log('tik shell '+key, change);
             if (change) {
                 this.state.shells[key] = {...this.state.shells[key], ...change};
             }

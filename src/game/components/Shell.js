@@ -15,4 +15,4 @@ const Shell = PixiComponent('Shell', {
     },
 });
 
-export default ({posX, posY}) => <Shell {...{posX, posY}} anchor='.5,.5' />
+export default ({posX, posY}) => <Shell posX={posX} posY={posY} />

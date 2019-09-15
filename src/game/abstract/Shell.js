@@ -1,6 +1,7 @@
 import * as Constants from "./constants";
 
 export default class AbstractShell {
+    index = 0;
     speed = 0;
     power = 0;
     posX = 0;
@@ -22,34 +23,47 @@ export default class AbstractShell {
      * @returns {Object|null}
      */
     tick = (game, delta) => {
-        const result = this._move(this.posX, this.posY, this.direction, this.speed, delta);
+        let result = this._move(this.posX, this.posY, this.direction, this.speed, delta);
+        let loop = 0;
         if (result.posX !== undefined && Math.floor(result.posX) !== Math.floor(this.posX)) {
+            let prevStepPosX = this.posX;
             while (true) {
                 const stepPosX = result.posX > this.posX
-                    ? this.posX + 1
-                    : this.posX - 1;
+                    ? prevStepPosX + 1
+                    : prevStepPosX - 1;
                 const area = game.getArea(stepPosX, this.posY);
                 if (area && !area.canBeMoved(this)) {
-                    result.posX = stepPosX;
+                    result = null;
                     game.hit(area, this);
                     break;
                 }
                 if (Math.floor(result.posX) === Math.floor(stepPosX)) {
                     break;
                 }
+                prevStepPosX = stepPosX;
+                if (loop++ > 5) {
+                    console.log('зацклило');
+                    break;
+                }
             }
         } else if (result.posY !== undefined && Math.floor(result.posY) !== Math.floor(this.posY)) {
+            let prevStepPosY = this.posY;
             while (true) {
                 const stepPosY = result.posY > this.posY
-                    ? this.posY + 1
-                    : this.posY - 1;
+                    ? prevStepPosY + 1
+                    : prevStepPosY - 1;
                 const area = game.getArea(this.posX, stepPosY);
                 if (area && !area.canBeMoved(this)) {
-                    result.posY = stepPosY;
+                    result = null;
                     game.hit(area, this);
                     break;
                 }
                 if (Math.floor(result.posY) === Math.floor(stepPosY)) {
+                    break;
+                }
+                prevStepPosY = stepPosY;
+                if (loop++ > 5) {
+                    console.log('зацклило');
                     break;
                 }
             }

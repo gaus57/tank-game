@@ -10,7 +10,7 @@
       "direction": "up",
       "posX": 25,
       "posY": 48,
-      "speed": 0.2,
+      "speed": 0.15,
       "size": 3
     },
     "2": {
@@ -18,7 +18,7 @@
       "direction": "down",
       "posX": 25,
       "posY": 0,
-      "speed": 0.2,
+      "speed": 0.15,
       "size": 3
     }
   },

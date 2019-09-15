@@ -29,6 +29,14 @@ export default class AbstractTank {
 
     };
 
+    shot = () => ({
+        posX: this.posX+(this.size/2-1),
+        posY: this.posY+(this.size/2-1),
+        direction: this.direction,
+        speed: 0.5,
+        power: this.power,
+    });
+
     /**
      *
      * @param {AbstractGame} game
@@ -36,6 +44,7 @@ export default class AbstractTank {
      * @returns {Object|null}
      */
     tick = (game, delta) => {
+        // console.log('tik tank');
         if (!this.moveDirection && this.posX%1 === 0 && this.posY%1 === 0) {
             return null;
         }
@@ -56,13 +65,13 @@ export default class AbstractTank {
         let loop = 0;
         if (result.posX !== undefined && (Math.floor(result.posX) !== Math.floor(this.posX) || this.posX%1 === 0)) {
             let prevStepPosX = this.posX;
-            console.log('first step', this.posX, delta, result);
+            // console.log('first step x', this.posX, delta, result);
             while (true) {
                 let stepPosX = this._nextStep(prevStepPosX, direction);
                 const stepAreas = game.getAreas(stepPosX, this.posY, stepPosX + this.size - 1, this.posY + this.size - 1);
                 if (stepAreas.length > 0 && !stepAreas.reduce((res, area) => res && area.canBeMoved(this), true)) {
                     result.posX = prevStepPosX;
-                    console.log('cantBeMoved', stepAreas);
+                    // console.log('cantBeMoved x', stepAreas);
                     break;
                 }
                 if (prevStepPosX%1 === 0 && Math.abs(prevStepPosX - result.posX) < 1) {
@@ -84,7 +93,7 @@ export default class AbstractTank {
                     : this._speed();
                 result = {...result, ...this._move(stepPosX, this.posY, direction, stepSpeed, delta)};
                 prevStepPosX = stepPosX;
-                console.log('step', this.posX, prevStepPosX, delta, result);
+                // console.log('step x', this.posX, prevStepPosX, delta, result);
                 if (loop++ > 10) {
                     console.log('зациклился');
                     break;
@@ -92,14 +101,14 @@ export default class AbstractTank {
             }
         }
         if (result.posY !== undefined && (Math.floor(result.posY) !== Math.floor(this.posY) || this.posY%1 === 0)) {
-            console.log('first step', this.posY, delta, result);
+            // console.log('first step y', this.posY, delta, result);
             let prevStepPosY = this.posY;
             while (true) {
                 let stepPosY = this._nextStep(prevStepPosY, direction);
                 const stepAreas = game.getAreas(this.posX, stepPosY, this.posX + this.size - 1, stepPosY + this.size - 1);
                 if (stepAreas.length > 0 && !stepAreas.reduce((res, area) => res && area.canBeMoved(this), true)) {
                     result.posY = prevStepPosY;
-                    console.log('cantBeMoved', stepAreas);
+                    // console.log('cantBeMoved y', stepAreas);
                     break;
                 }
                 if (prevStepPosY%1 === 0 && Math.abs(prevStepPosY - result.posY) < 1) {
@@ -120,7 +129,7 @@ export default class AbstractTank {
                     : this._speed();
                 result = {...result, ...this._move(this.posX, stepPosY, direction, stepSpeed, delta)};
                 prevStepPosY = stepPosY;
-                console.log('step', this.posY, delta, result);
+                // console.log('step y', this.posY, delta, result);
                 if (loop++ > 10) {
                     console.log('зациклился');
                     break;
