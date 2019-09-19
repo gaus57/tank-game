@@ -10,16 +10,16 @@ const ROTATION = {
 };
 
 export default ({data}) => {
-    const { posX, posY, direction } = data;
+    const { posX, posY, size, direction } = data;
     const rotation = ROTATION[direction];
 
     return <Sprite
-        x={(posX+0.5)*Constants.SCALE}
-        y={(posY+0.5)*Constants.SCALE}
+        x={posX*Constants.SCALE}
+        y={posY*Constants.SCALE}
         rotation={rotation}
         image='tank-3.png'
-        width={3*Constants.SCALE}
-        height={3*Constants.SCALE}
+        width={size*Constants.SCALE}
+        height={size*Constants.SCALE}
         anchor='.5,.5'
     />
 }

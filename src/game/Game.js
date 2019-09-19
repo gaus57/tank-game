@@ -23,7 +23,7 @@ const MapBorder = PixiComponent('MapBorder', {
 
     instance.clear();
     instance.beginFill(0x000000);
-    instance.drawRect((x-1)*Constants.SCALE, (y-1)*Constants.SCALE, width, height);
+    instance.drawRect((x-.5)*Constants.SCALE, (y-.5)*Constants.SCALE, width, height);
     instance.endFill();
   },
 });

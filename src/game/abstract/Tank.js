@@ -30,8 +30,8 @@ export default class AbstractTank {
     };
 
     shot = () => ({
-        posX: this.posX+(this.size/2-1),
-        posY: this.posY+(this.size/2-1),
+        posX: this.posX,
+        posY: this.posY,
         direction: this.direction,
         speed: 0.5,
         power: this.power,
@@ -57,7 +57,7 @@ export default class AbstractTank {
             result.direction = this.moveDirection;
         }
         let direction = result.direction || this.direction;
-        const areas = game.getAreas(this.posX, this.posY, this.posX + this.size - 1, this.posY + this.size - 1);
+        const areas = this._takenAreas(game, this.posX, this.posY);
         const speed = areas.length > 0
             ? Math.min(...areas.map((area) => area.movedSpeed(this._speed())))
             : this._speed();
@@ -68,7 +68,7 @@ export default class AbstractTank {
             // console.log('first step x', this.posX, delta, result);
             while (true) {
                 let stepPosX = this._nextStep(prevStepPosX, direction);
-                const stepAreas = game.getAreas(stepPosX, this.posY, stepPosX + this.size - 1, this.posY + this.size - 1);
+                const stepAreas = this._takenAreas(game, stepPosX, this.posY);
                 if (stepAreas.length > 0 && !stepAreas.reduce((res, area) => res && area.canBeMoved(this), true)) {
                     result.posX = prevStepPosX;
                     // console.log('cantBeMoved x', stepAreas);
@@ -105,7 +105,7 @@ export default class AbstractTank {
             let prevStepPosY = this.posY;
             while (true) {
                 let stepPosY = this._nextStep(prevStepPosY, direction);
-                const stepAreas = game.getAreas(this.posX, stepPosY, this.posX + this.size - 1, stepPosY + this.size - 1);
+                const stepAreas = this._takenAreas(game, this.posX, stepPosY);
                 if (stepAreas.length > 0 && !stepAreas.reduce((res, area) => res && area.canBeMoved(this), true)) {
                     result.posY = prevStepPosY;
                     // console.log('cantBeMoved y', stepAreas);
@@ -138,6 +138,20 @@ export default class AbstractTank {
         }
 
         return result;
+    };
+
+    /**
+     *
+     * @param {AbstractGame} game
+     * @param {number} posX
+     * @param {number} posY
+     * @returns {Array|AbstractArea[]|AbstractTank[]}
+     * @private
+     */
+    _takenAreas = (game, posX, posY) => {
+        const side = (this.size - 1) / 2;
+
+        return game.getAreas(posX - side, posY - side, posX + side, posY + side);
     };
 
     _speed() {
