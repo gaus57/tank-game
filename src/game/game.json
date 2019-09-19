@@ -6,6 +6,7 @@
   "player": "1",
   "tanks": {
     "1": {
+      "player": "1",
       "moveDirection": null,
       "direction": "up",
       "posX": 25,
@@ -14,6 +15,7 @@
       "size": 3
     },
     "2": {
+      "player": "2",
       "moveDirection": null,
       "direction": "down",
       "posX": 25,

@@ -1,7 +1,8 @@
 import * as Constants from './constants';
 
 export default class AbstractTank {
-    size = 1;
+    player = '';
+    size = 0;
     speed = 0;
     helthMax = 0;
     helth = 0;
@@ -26,7 +27,10 @@ export default class AbstractTank {
     };
 
     takesPosition = (posX, posY) => {
+        const side = (this.size - 1) / 2;
 
+        return posX >= this.posX - side && posX <= this.posX + side
+            && posY >= this.posY - side && posY <= this.posY + side
     };
 
     shot = () => ({
@@ -151,7 +155,8 @@ export default class AbstractTank {
     _takenAreas = (game, posX, posY) => {
         const side = (this.size - 1) / 2;
 
-        return game.getAreas(posX - side, posY - side, posX + side, posY + side);
+        return game.getAreas(posX - side, posY - side, posX + side, posY + side)
+            .filter((area => !area instanceof AbstractTank || area.player !== this.player));
     };
 
     _speed() {
