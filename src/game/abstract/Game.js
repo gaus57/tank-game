@@ -76,7 +76,7 @@ export default class AbstractGame {
             delete this.state.areas[`${area.posX}.${area.posY}`];
         }
         if (area instanceof AbstractTank) {
-
+            this.state.tanks[area.player] = {...this.state.tanks[area.player], ...area.hit(shell)}
         }
         delete this.state.shells[shell.index];
     };

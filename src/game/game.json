@@ -12,7 +12,11 @@
       "posX": 25,
       "posY": 49,
       "speed": 0.15,
-      "size": 3
+      "size": 3,
+      "power": 20,
+      "health": 100,
+      "healthMax": 100,
+      "enabled": true
     },
     "2": {
       "player": "2",
@@ -21,7 +25,11 @@
       "posX": 25,
       "posY": 1,
       "speed": 0.15,
-      "size": 3
+      "size": 3,
+      "power": 20,
+      "health": 100,
+      "healthMax": 100,
+      "enabled": true
     }
   },
   "shellIndex": 1,

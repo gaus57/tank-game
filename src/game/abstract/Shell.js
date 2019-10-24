@@ -1,6 +1,7 @@
 import * as Constants from "./constants";
 
 export default class AbstractShell {
+    player = '';
     index = 0;
     speed = 0;
     power = 0;

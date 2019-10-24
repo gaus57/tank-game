@@ -1,11 +1,12 @@
 import * as Constants from './constants';
+import AbstractShell from "./Shell";
 
 export default class AbstractTank {
     player = '';
     size = 0;
     speed = 0;
-    helthMax = 0;
-    helth = 0;
+    healthMax = 0;
+    health = 0;
     power = 0;
     reloadSpeed = 0;
     reload = 0;
@@ -13,6 +14,7 @@ export default class AbstractTank {
     posY = 0;
     direction = null;
     moveDirection = null;
+    enabled = true;
 
     constructor(params) {
         for (const key in params) {
@@ -23,7 +25,20 @@ export default class AbstractTank {
     }
 
     canBeMoved = (obj) => {
-        return false;
+        if (obj instanceof AbstractShell && obj.player === this.player) {
+            return true;
+        }
+
+        return !this.enabled;
+    };
+
+    /**
+     *
+     * @param {number} speed
+     * @returns {number}
+     */
+    movedSpeed = (speed) => {
+        return speed;
     };
 
     takesPosition = (posX, posY) => {
@@ -34,6 +49,7 @@ export default class AbstractTank {
     };
 
     shot = () => ({
+        player: this.player,
         posX: this.posX,
         posY: this.posY,
         direction: this.direction,
@@ -43,11 +59,35 @@ export default class AbstractTank {
 
     /**
      *
+     * @param {AbstractShell} shell
+     * @returns {object}
+     */
+    hit = (shell) => {
+        const result = {};
+        if (shell.player === this.player) {
+            return result;
+        }
+
+        result.health = this.health - shell.power;
+        if (result.health <= 0) {
+            result.health = 0;
+            result.enabled = false;
+        }
+
+        return result;
+    };
+
+    /**
+     *
      * @param {AbstractGame} game
      * @param {number} delta
      * @returns {Object|null}
      */
     tick = (game, delta) => {
+        if (!this.enabled) {
+            return null;
+        }
+
         // console.log('tik tank');
         if (!this.moveDirection && this.posX%1 === 0 && this.posY%1 === 0) {
             return null;
